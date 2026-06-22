@@ -14,15 +14,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          cat >> ~/.ssh/config << EOF
+          Host deploy-server
+            HostName ${{ secrets.AI_DEPLOY_HOST }}
+            User ${{ secrets.AI_DEPLOY_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
+
       - name: Deploy to Server
         run: |
           echo "Deploying AI Cluster to Linux Server..."
           echo "Target: ${{ secrets.AI_DEPLOY_HOST }}"
           echo "Path: ${{ secrets.AI_DEPLOY_PATH }}"
-          
+
           # 创建部署目录
-          ssh ${{ secrets.AI_DEPLOY_USER }}@${{ secrets.AI_DEPLOY_HOST }} "mkdir -p ${{ secrets.AI_DEPLOY_PATH }}"
-          
+          ssh deploy-server "mkdir -p ${{ secrets.AI_DEPLOY_PATH }}"
+
           # 同步代码到服务器
           rsync -avz --delete \
             --exclude '.git' \
@@ -31,24 +45,28 @@ jobs:
             --exclude '.github' \
             --exclude 'venv' \
             --exclude '.env' \
-            ./ ${{ secrets.AI_DEPLOY_USER }}@${{ secrets.AI_DEPLOY_HOST }}:${{ secrets.AI_DEPLOY_PATH }}/
-          
+            ./ deploy-server:${{ secrets.AI_DEPLOY_PATH }}/
+
           echo "Code deployed successfully"
 
       - name: Restart Service
         run: |
           # 在服务器上重启服务
-          ssh ${{ secrets.AI_DEPLOY_USER }}@${{ secrets.AI_DEPLOY_HOST }} << 'EOF'
+          ssh deploy-server << 'EOF'
             cd ${{ secrets.AI_DEPLOY_PATH }}
-            
+
             # 安装依赖
             pip install -r requirements.txt
-            
+
             # 重启服务 (使用 systemd 或 supervisor)
             sudo systemctl restart ai-cluster || sudo supervisorctl restart ai-cluster || echo "Service restart command not available"
-            
+
             echo "Service restarted"
           EOF
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
 
       - name: Verify Deployment
         run: |
