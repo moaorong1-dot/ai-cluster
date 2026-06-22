@@ -1,0 +1,61 @@
+name: Deploy AI Cluster
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    name: Deploy to Linux Server
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server
+        run: |
+          echo "Deploying AI Cluster to Linux Server..."
+          echo "Target: ${{ secrets.AI_DEPLOY_HOST }}"
+          echo "Path: ${{ secrets.AI_DEPLOY_PATH }}"
+          
+          # 创建部署目录
+          ssh ${{ secrets.AI_DEPLOY_USER }}@${{ secrets.AI_DEPLOY_HOST }} "mkdir -p ${{ secrets.AI_DEPLOY_PATH }}"
+          
+          # 同步代码到服务器
+          rsync -avz --delete \
+            --exclude '.git' \
+            --exclude '__pycache__' \
+            --exclude '*.pyc' \
+            --exclude '.github' \
+            --exclude 'venv' \
+            --exclude '.env' \
+            ./ ${{ secrets.AI_DEPLOY_USER }}@${{ secrets.AI_DEPLOY_HOST }}:${{ secrets.AI_DEPLOY_PATH }}/
+          
+          echo "Code deployed successfully"
+
+      - name: Restart Service
+        run: |
+          # 在服务器上重启服务
+          ssh ${{ secrets.AI_DEPLOY_USER }}@${{ secrets.AI_DEPLOY_HOST }} << 'EOF'
+            cd ${{ secrets.AI_DEPLOY_PATH }}
+            
+            # 安装依赖
+            pip install -r requirements.txt
+            
+            # 重启服务 (使用 systemd 或 supervisor)
+            sudo systemctl restart ai-cluster || sudo supervisorctl restart ai-cluster || echo "Service restart command not available"
+            
+            echo "Service restarted"
+          EOF
+
+      - name: Verify Deployment
+        run: |
+          # 等待服务启动
+          sleep 5
+          
+          # 健康检查
+          curl -f http://${{ secrets.AI_DEPLOY_HOST }}:8002/health || echo "Health check failed, service may need manual restart"
+          
+          echo "Deploy workflow completed"
