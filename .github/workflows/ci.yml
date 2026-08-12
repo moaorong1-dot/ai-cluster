@@ -1,0 +1,41 @@
+name: CI
+
+# 最小 CI 门禁：在合并到 main 前跑一遍 Python 语法 + 应用导入冒烟 + ruff 风格提示。
+# 与 mcn/brain 的 CI 风格保持一致，作为后续部署闸的铺垫。
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: python syntax + app import smoke + ruff(info)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: syntax check (backend python, exclude frontend)
+        run: find . -name '*.py' -not -path './.git/*' -not -path './frontend/*' -not -path './__pycache__/*' -print0 | xargs -0 python -m py_compile
+
+      - name: app import smoke test
+        # main.py 仅创建 FastAPI app 对象；服务初始化惰性放在 lifespan 内，
+        # 导入阶段不连任何外部服务，因此这是安全的冒烟检查（能抓到 import 级错误/缺依赖）。
+        run: python -c "import main; assert hasattr(main, 'app'), 'FastAPI app object missing'; print('app import OK:', main.app.title)"
+
+      - name: ruff check (informational)
+        run: ruff check . --exclude frontend || echo "::warning::ruff found style issues (non-blocking)"
+        continue-on-error: true
