@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "task_id": "public-governance-caller-smoke-20260814",
+  "repository": "moaorong1-dot/ai-cluster",
+  "pull_request": 1,
+  "route_profile": "documentation",
+  "skills_used": [
+    "andrej-karpathy-skill",
+    "agent-skills:source-driven-development"
+  ],
+  "sources": [
+    {
+      "kind": "official_document",
+      "title": "GitHub reusable workflows",
+      "url": "https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows",
+      "revision": "2026-08-14",
+      "license": "GitHub Terms",
+      "maintenance": "active",
+      "security_assessment": "Caller pins a full public commit SHA and the reusable validator reads PR data without checkout or execution."
+    }
+  ],
+  "reuse_decision": {
+    "decision": "reuse",
+    "rationale": "Reuse the already reviewed public governance validator instead of duplicating its read-only API validation logic in ai-cluster."
+  },
+  "verification_plan": [
+    "Confirm these canonical artifacts are bound to the assigned GitHub PR number and pass the server-side provenance check.",
+    "Confirm the existing Python syntax/import smoke CI still passes without any product-code change."
+  ]
+}
