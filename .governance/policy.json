@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "automated_review": {
+    "mode": "codex_fixed_sha",
+    "require_independent_readonly_reviewer": true,
+    "onboarding": "Before opening a non-trivial PR, freeze a commit SHA and obtain a PASS or CHANGES_REQUESTED verdict from a separate read-only Codex reviewer who did not implement the change. P0/P1 findings block integration and every changed review unit requires re-review. GitHub native APPROVED reviews and CODEOWNERS are not merge prerequisites; the server-side workflow validates artifact provenance and schema but does not authenticate the semantic review itself."
+  }
+}
