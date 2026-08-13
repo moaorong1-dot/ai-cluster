@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "task_id": "public-governance-caller-smoke-20260814",
+  "repository": "moaorong1-dot/ai-cluster",
+  "pull_request": 4,
+  "implementer_identity": "moaorong1-dot",
+  "owner": {
+    "identity": "governance-business-owner",
+    "role": "Non-technical governance owner"
+  },
+  "status": "待业务验收",
+  "original_requirement_scope": "Validate only the public server-side governance caller on a metadata-only PR; product code, dependencies, deployment, service behavior, and business features are out of scope.",
+  "testable_scenarios": [
+    {
+      "id": "server-provenance",
+      "steps": "Open the artifact-only PR after the caller is on main and inspect the exact-head server-side provenance check.",
+      "expected_result": "The check validates the policy and both artifacts without checking out or executing PR product code."
+    },
+    {
+      "id": "existing-ci",
+      "steps": "Inspect the existing Python syntax and import smoke CI on the same PR head.",
+      "expected_result": "Existing CI succeeds and no deployment is triggered from the pull-request event."
+    }
+  ],
+  "technical_review": {
+    "reviewed_commit": "453e5deea80bf63f0ca4cfa4b05126c615bd4ba3",
+    "verdict": "PASS",
+    "reviewer_identity": "codex-independent-reviewer"
+  },
+  "ci_deploy_evidence": "Provisional artifact content review only; GitHub server provenance and existing CI must run on the final exact PR head. No deployment is claimed.",
+  "date": "2026-08-14",
+  "known_gaps": "PR #4 and the independently PASS-reviewed artifact-containing commit are now bound. Before integration, independently review the final fixed PR head and verify exact-head server provenance and existing CI.",
+  "risk_rollback": "Close the metadata-only PR or revert its merge; no product behavior or deployment change exists.",
+  "conclusion": "This is a governance-only artifact unit, not proof of semantic code review, deployment, real-device verification, or business acceptance."
+}
