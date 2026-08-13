@@ -29,7 +29,7 @@
   },
   "ci_deploy_evidence": "Provisional artifact content review only; GitHub server provenance and existing CI must run on the final exact PR head. No deployment is claimed.",
   "date": "2026-08-14",
-  "known_gaps": "This provisional record uses PR 1 and the caller-bootstrap base as references. Before integration, bind the actual PR number and point reviewed_commit to an independently reviewed fixed SHA that contains both artifacts.",
+  "known_gaps": "PR #4 is now bound, but reviewed_commit still points to the caller-bootstrap base. Before integration, replace it with an independently PASS-reviewed fixed SHA that contains both artifacts, then review the final PR head and verify exact-head CI.",
   "risk_rollback": "Close the metadata-only PR or revert its merge; no product behavior or deployment change exists.",
   "conclusion": "This is a provisional governance-only artifact unit, not proof of semantic code review, deployment, real-device verification, or business acceptance."
 }
