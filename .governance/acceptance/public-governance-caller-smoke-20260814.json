@@ -23,13 +23,13 @@
     }
   ],
   "technical_review": {
-    "reviewed_commit": "c14cd28bbbb1067c4c1e26a06aca90ac479af780",
+    "reviewed_commit": "453e5deea80bf63f0ca4cfa4b05126c615bd4ba3",
     "verdict": "PASS",
     "reviewer_identity": "codex-independent-reviewer"
   },
   "ci_deploy_evidence": "Provisional artifact content review only; GitHub server provenance and existing CI must run on the final exact PR head. No deployment is claimed.",
   "date": "2026-08-14",
-  "known_gaps": "PR #4 is now bound, but reviewed_commit still points to the caller-bootstrap base. Before integration, replace it with an independently PASS-reviewed fixed SHA that contains both artifacts, then review the final PR head and verify exact-head CI.",
+  "known_gaps": "PR #4 and the independently PASS-reviewed artifact-containing commit are now bound. Before integration, independently review the final fixed PR head and verify exact-head server provenance and existing CI.",
   "risk_rollback": "Close the metadata-only PR or revert its merge; no product behavior or deployment change exists.",
-  "conclusion": "This is a provisional governance-only artifact unit, not proof of semantic code review, deployment, real-device verification, or business acceptance."
+  "conclusion": "This is a governance-only artifact unit, not proof of semantic code review, deployment, real-device verification, or business acceptance."
 }
