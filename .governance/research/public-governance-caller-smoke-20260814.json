@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "public-governance-caller-smoke-20260814",
   "repository": "moaorong1-dot/ai-cluster",
-  "pull_request": 1,
+  "pull_request": 4,
   "route_profile": "documentation",
   "skills_used": [
     "andrej-karpathy-skill",
